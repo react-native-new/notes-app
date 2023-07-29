@@ -16,7 +16,7 @@ export default function LoginScreen() {
     useEffect(() => {
         return auth.onAuthStateChanged((user) => {
             if (user) {
-                navigation.navigate('Home');
+                navigation.replace('Start');
             }
         })
     }, []);
@@ -38,7 +38,7 @@ export default function LoginScreen() {
         console.log('signIn -> Start');
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredentials) => {
-                console.log('signUp -> Response');
+                console.log('signIn -> Response');
                 const user = userCredentials.user;
                 console.log('Logged in with: ', user.email);
             })
