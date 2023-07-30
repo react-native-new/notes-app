@@ -85,12 +85,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-start',
     },
-    caption: {
-        textAlign: 'center',
-        color: 'lightgreen',
-        fontSize: 24,
-        marginTop: 35
-    },
     homePanel: {
         justifyContent: 'flex-start',
         alignItems: 'center',
@@ -129,8 +123,7 @@ const styles = StyleSheet.create({
         margin: 5,
         padding: 5,
         borderRadius: 5,        
-        alignItems: 'center',
-        boxShadow: '0px 2px 5px gold'
+        alignItems: 'center'
     },
     noteTitle: {
         color: 'purple',
