@@ -18,6 +18,11 @@ export default function StartScreen() {
             .catch((error) => alert(error.message));
     };
 
+    // 3
+    const handleStart = () => {
+        navigation.navigate('Home');
+    }
+
     // #
     return (
         <View style={styles.container}>
@@ -33,7 +38,7 @@ export default function StartScreen() {
                     </Text>
                     <View style={styles.buttonPanel}>
                         <TouchableOpacity
-                            onPress={() => {}}
+                            onPress={handleStart}
                             style={styles.button}
                         >
                             <Text style={styles.buttonText}>Розпочати</Text>

@@ -1,24 +1,42 @@
+import React, { useState, useEffect } from 'react';
 import { 
     StyleSheet, Text, View, ImageBackground, KeyboardAvoidingView, TouchableOpacity
 } from 'react-native';
-import React from 'react';
-import { auth } from '../firebase';
+import { db } from '../firebase';
+import { collection, getDocs } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
+import { FlashList } from '@shopify/flash-list';
 
 export default function HomeScreen() {
     // 1
+    let buff = [];
     const navigation = useNavigation();
-    
+    const [notes, setNotes] = useState([]);    
+
     // 2
-    const handleSignOut = () => {
-        auth.signOut()
-            .then(() => {
-                navigation.replace('Login');
-            })
-            .catch((error) => alert(error.message));
+    const fetchNotes = async () => {        
+        const queryCollection = collection(db, 'notes');
+        const querySnapshot = await getDocs(queryCollection);
+        // ->       
+        querySnapshot.forEach((doc) => {
+            const {note, title} = doc.data();
+            buff.push({note, title, id: doc.id});
+        });
+    };
+    
+    // 3
+    useEffect(() => {        
+        fetchNotes().then(() => {
+            setNotes(buff);
+        });
+    }, []);
+
+    // 4
+    const handleGoToAdd = () => {
+        navigation.navigate('Add');        
     };
 
-    // #
+    // 5
     return (
         <View style={styles.container}>
             <ImageBackground 
@@ -26,24 +44,32 @@ export default function HomeScreen() {
                 resizeMode="cover" 
                 style={styles.bgImage}
             >
-                <Text style={styles.caption}>Персональні нотатки</Text>
-                <KeyboardAvoidingView style={styles.startPanel}>
-                    <Text style={styles.email}>
-                        Hi, {auth.currentUser?.email}!
-                    </Text>
-                    <View style={styles.buttonPanel}>
+                <KeyboardAvoidingView style={styles.homePanel}>                    
+                    <View style={styles.buttonPanel}>                        
                         <TouchableOpacity
-                            onPress={() => {}}
-                            style={styles.button}
-                        >
-                            <Text style={styles.buttonText}>Розпочати</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={handleSignOut}
+                            onPress={handleGoToAdd}
                             style={[styles.button, styles.buttonOutline]}
                         >
-                            <Text style={styles.buttonOutlineText}>Завершити</Text>
+                            <Text style={styles.buttonOutlineText}>Додати нотатку</Text>                            
                         </TouchableOpacity>
+                    </View>
+                    <View style={styles.notesList}>
+                        <FlashList
+                            data={notes}
+                            numColumns={2}                                
+                            estimatedItemSize={100}
+                            style={styles.flashList}                               
+                            renderItem={({item}) => (
+                                <View style={styles.noteView}>
+                                    <Text style={styles.noteTitle}>
+                                        {item.title}
+                                    </Text>
+                                    <Text style={styles.noteContent}>
+                                        {item.note}
+                                    </Text>
+                                </View>
+                            )}
+                        />
                     </View>
                 </KeyboardAvoidingView>
             </ImageBackground>
@@ -65,14 +91,14 @@ const styles = StyleSheet.create({
         fontSize: 24,
         marginTop: 35
     },
-    startPanel: {
-        justifyContent: 'center',
+    homePanel: {
+        justifyContent: 'flex-start',
         alignItems: 'center',
         flex: 1
     },    
     buttonPanel: {
         width: '50%',
-        marginTop: 30
+        marginTop: 15
     },
     button: {
         backgroundColor: 'bisque',
@@ -88,17 +114,31 @@ const styles = StyleSheet.create({
         borderColor: 'navy',
         borderWidth: 1
     },
-    buttonText: {
-        color: 'red',
-        fontSize: 14
-    },
     buttonOutlineText: {
         color: 'navy',
         fontSize: 14
     },
-    email: {
-        color: 'gold',
-        fontSize: 16,
-        marginTop: -100
-    }
+    notesList: {
+        flex: 1,
+        padding: 15,
+        width: '100%'
+    },
+    noteView: {
+        flex: 1,
+        backgroundColor: 'bisque',
+        margin: 5,
+        padding: 5,
+        borderRadius: 5,        
+        alignItems: 'center',
+        boxShadow: '0px 2px 5px gold'
+    },
+    noteTitle: {
+        color: 'purple',
+        fontSize: 15,
+        fontWeight: 'bold'
+    },
+    noteContent: {
+        color: 'navy',
+        paddingBottom: 5
+    },
 });
