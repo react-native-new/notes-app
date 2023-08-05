@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: 'lightgreen',
-        padding: 7,
+        padding: 8,
         borderRadius: 10,
         alignItems: 'center',
         borderColor: 'teal',

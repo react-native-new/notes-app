@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-    StyleSheet, Text, View, ImageBackground, KeyboardAvoidingView, TouchableOpacity
+    StyleSheet, Text, View, ImageBackground, KeyboardAvoidingView, 
+    TouchableOpacity, Pressable
 } from 'react-native';
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
@@ -53,7 +54,7 @@ export default function HomeScreen() {
                             <Text style={styles.buttonOutlineText}>Додати нотатку</Text>                            
                         </TouchableOpacity>
                     </View>
-                    <View style={styles.notesList}>
+                    <View style={styles.notesList}>                        
                         <FlashList
                             data={notes}
                             numColumns={2}                                
@@ -61,12 +62,18 @@ export default function HomeScreen() {
                             style={styles.flashList}                               
                             renderItem={({item}) => (
                                 <View style={styles.noteView}>
-                                    <Text style={styles.noteTitle}>
-                                        {item.title}
-                                    </Text>
-                                    <Text style={styles.noteContent}>
-                                        {item.note}
-                                    </Text>
+                                    <Pressable
+                                        onPress={() => {
+                                            navigation.navigate('Detail', {item});
+                                        }}
+                                    >
+                                        <Text style={styles.noteTitle}>
+                                            {item.title}
+                                        </Text>
+                                        <Text style={styles.noteContent}>
+                                            {item.note}
+                                        </Text>
+                                    </Pressable>
                                 </View>
                             )}
                         />
@@ -96,7 +103,7 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: 'bisque',
-        padding: 7,
+        padding: 8,
         borderRadius: 10,
         alignItems: 'center',
         borderColor: 'teal',
@@ -123,7 +130,7 @@ const styles = StyleSheet.create({
         margin: 5,
         padding: 5,
         borderRadius: 5,        
-        alignItems: 'center'
+        alignItems: 'center',
     },
     noteTitle: {
         color: 'purple',
